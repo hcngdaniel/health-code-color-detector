@@ -1,0 +1,5 @@
+/data
+/__pycache__
+/collect_data.py
+/dataset.py
+/train.py
