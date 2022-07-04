@@ -8,14 +8,12 @@ import numpy as np
 import cv2
 from pyzbar.pyzbar import decode
 
-
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
+print(device)
 model = Model()
-model.load_state_dict(torch.load('model.pth'))
+model.load_state_dict(torch.load('model-3.pth'))
 model.eval()
 model.to(device)
-
 
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
@@ -39,13 +37,16 @@ while cap.isOpened():
         polyline = np.array([[point.x, point.y] for point in code.polygon]).reshape((-1, 1, 2))
         if color == "red":
             cv2.polylines(frame, [polyline], True, (0, 0, 255), 3)
-            cv2.putText(frame, "red", (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame, f"red: {poss[np.argmax(poss)]:.2f}", (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                        (0, 0, 255), 2)
         if color == "yellow":
             cv2.polylines(frame, [polyline], True, (0, 255, 255), 3)
-            cv2.putText(frame, "yellow", (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+            cv2.putText(frame, f"yellow: {poss[np.argmax(poss)]:.2f}", (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                        (0, 255, 255), 2)
         if color == "green":
             cv2.polylines(frame, [polyline], True, (0, 255, 0), 3)
-            cv2.putText(frame, "green", (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(frame, f"green: {poss[np.argmax(poss)]:.2f}", (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                        (0, 255, 0), 2)
         print(color)
     cv2.imshow("frame", frame)
     cv2.waitKey(16)
